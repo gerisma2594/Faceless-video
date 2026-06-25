@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/content-studio/',
+  base: '/Faceless-video/',
   build: { outDir: 'dist' },
   define: { 'process.env': {} }
 })
