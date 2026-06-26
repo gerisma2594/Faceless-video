@@ -96,8 +96,24 @@ async function callClaude(prompt) {
       "anthropic-version": "2023-06-01",
       "anthropic-dangerous-direct-browser-access": "true",
     },
-    body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 4000, messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 4000,
+      messages: [{ role: "user", content: prompt }],
+    }),
   });
+  if (!res.ok) {
+    const errBody = await res.text();
+    console.error("API Error:", res.status, errBody);
+    throw { status: res.status, body: errBody };
+  }
+  const data = await res.json();
+  const raw = data.content.map(b => b.text || "").join("");
+  const a = Math.min(...["{", "["].map(c => raw.indexOf(c)).filter(i => i !== -1));
+  const b2 = Math.max(...["}", "]"].map(c => raw.lastIndexOf(c)));
+  return JSON.parse(raw.slice(a, b2 + 1));
+}
+
   if (!res.ok) throw { status: res.status };
   const data = await res.json();
   const raw = data.content.map(b => b.text || "").join("");
